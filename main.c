@@ -189,7 +189,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     (void) mods;
 
     if (action == GLFW_PRESS) {
-        if (key == GLFW_KEY_F5) {
+        if (key == GLFW_KEY_R) {
             reload_shaders();
         } else if (key == GLFW_KEY_SPACE) {
             pause = !pause;

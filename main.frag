@@ -8,29 +8,37 @@ uniform vec2 mouse;
 
 out vec4 out_color;
 
-#define R 500.0
-#define RADIUS 100.0
+#define MARKER_RADIUS 12.5
+#define THICKNESS     10.0
 
-void main(void) {
-    vec2 coord_uv = gl_FragCoord.xy / resolution;
-    vec2 mouse_uv = mouse / resolution;
+void marker(vec2 center, vec4 color)
+{
+   if (length(gl_FragCoord.xy - center) < MARKER_RADIUS)
+   {
+      out_color += color;
+   }
+}
 
-    float t = 1.0 - min(length(coord_uv - mouse_uv), R) / R;
+void main(void)
+{
+   out_color = vec4(0.0);
 
-    //out_color = vec4(
-    //    (sin(t*(coord_uv.x + time)) + 1.0) / 2.0,
-    //    (cos(t*(coord_uv.y + time)) + 1.0) / 2.0,
-    //    (cos(t*(coord_uv.x + coord_uv.y + time)) + 1.0) / 2.0,
-    //    1.0);
+   vec2 p1 = vec2(200.0, 200.0);
+   vec2 p2 = mouse;
+   vec2 p3 = gl_FragCoord.xy;
+   vec2 p12 = p2 - p1;
+   vec2 p13 = p3 - p1;
 
-    vec2 center = mouse;
+   float d = dot(p12, p13) / length(p12);
+   vec2 p4 = p1 + normalize(p12) * d;
 
-    if (length(gl_FragCoord.xy - center) < (RADIUS * (sin(time) + 1.0) / 2.0))
-    {
-        out_color = vec4(1.0);
-    }
-    else
-    {
-        out_color = vec4(0.0);
-    }
+   if (length(p3 - p4) <= THICKNESS &&
+       length(p4 - p1) <= length(p12) &&
+       length(p4 - p2) <= length(p12))
+   {
+      out_color += vec4(0.0, 1.0, 0.0, 1.0);
+   }
+
+   marker(p1, vec4(1.0, 0.0, 0.0, 1.0));
+   marker(p2, vec4(1.0, 0.0, 0.0, 1.0));
 }
